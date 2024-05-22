@@ -88,7 +88,10 @@ export default function PostCard({
           <DialogContent className="flex">
             {post.posts_likes?.map((liker) => {
               return (
-                <div className="text-sm">{`@${liker.users?.username}`}</div>
+                <div
+                  key={liker.id}
+                  className="text-sm"
+                >{`@${liker.users?.username}`}</div>
               );
             })}
           </DialogContent>
