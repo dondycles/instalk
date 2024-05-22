@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 
-export const signUpSchema = z
+const signUpSchema = z
   .object({
     fullname: z.string().min(2),
     username: z.string().min(2).max(50),
@@ -26,6 +26,8 @@ export const signUpSchema = z
     message: "Password did not match!",
     path: ["cpassword"],
   });
+
+export type signUpTypes = z.infer<typeof signUpSchema>;
 
 export default function SignUp() {
   const router = useRouter();

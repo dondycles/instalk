@@ -1,7 +1,7 @@
 "use client";
 import { login } from "../actions";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useFormState } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,10 +15,12 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 
-export const logInSchema = z.object({
+const logInSchema = z.object({
   username: z.string().min(2).max(50),
   password: z.string().min(8),
 });
+
+export type logInSchemaTypes = z.infer<typeof logInSchema>;
 
 export default function LogIn() {
   const router = useRouter();

@@ -1,11 +1,10 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
-import { z } from "zod";
-import { logInSchema } from "./login/page";
-import { signUpSchema } from "./signup/page";
+import { logInSchemaTypes } from "./login/page";
+import { signUpTypes } from "./signup/page";
 
-export async function login(logInData: z.infer<typeof logInSchema>) {
+export async function login(logInData: logInSchemaTypes) {
   const supabase = createClient();
 
   // type-casting here for convenience
@@ -24,7 +23,7 @@ export async function login(logInData: z.infer<typeof logInSchema>) {
   return { success: "Logged in!" };
 }
 
-export async function signup(signUpData: z.infer<typeof signUpSchema>) {
+export async function signup(signUpData: signUpTypes) {
   const supabase = createClient();
 
   // type-casting here for convenience
