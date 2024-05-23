@@ -12,18 +12,26 @@ import { Database } from "@/database.types";
 import { BiLike } from "react-icons/bi";
 import { FaUserCircle } from "react-icons/fa";
 import { MdOutlinePublic, MdLockOutline } from "react-icons/md";
-import likePost from "../actions/post-like-post";
+import likePost from "../actions/like-post";
 import { useQueryClient } from "@tanstack/react-query";
-import unlikePost from "../actions/post-unlike-post";
+import unlikePost from "../actions/unlike-post";
 import { useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import Link from "next/link";
+import UserHoverCard from "./user-hovercard";
 
 export default function PostCard({
   post,
@@ -58,24 +66,7 @@ export default function PostCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex flex-row gap-1">
-          <FaUserCircle className="text-4xl" />
-          <div className="flex flex-col">
-            <p className="text-sm">@{post.users?.username}</p>
-            <div className="flex flex-row items-center gap-1">
-              <p className="text-xs font-normal">
-                {new Date(post.created_at).toLocaleDateString()}
-              </p>
-              <div className="text-sm">
-                {post.privacy === "public" ? (
-                  <MdOutlinePublic />
-                ) : (
-                  <MdLockOutline />
-                )}
-              </div>
-            </div>
-          </div>
-        </CardTitle>
+        <UserHoverCard post={post} user={user} />
       </CardHeader>
       <CardContent className="whitespace-pre-line">{post.content}</CardContent>
       <div className="px-4 pb-4 text-xs text-muted-foreground flex flex-row gap-4">
@@ -85,18 +76,25 @@ export default function PostCard({
               {post.posts_likes?.length ?? 0} likes(s)
             </button>
           </DialogTrigger>
-          <DialogContent className="flex">
-            {post.posts_likes?.map((liker) => {
-              return (
-                <div
-                  key={liker.id}
-                  className="text-sm"
-                >{`@${liker.users?.username}`}</div>
-              );
-            })}
+
+          <DialogContent className="flex flex-col gap-4">
+            <DialogHeader>
+              <DialogTitle>People who liked this post.</DialogTitle>
+            </DialogHeader>
+            <ScrollArea className="h-[70dvh]">
+              <div className="flex flex-col gap-4">
+                {post.posts_likes?.map((liker) => {
+                  return (
+                    <div
+                      key={liker.id}
+                      className="text-sm rounded-md border-border border p-4"
+                    >{`@${liker.users?.username}`}</div>
+                  );
+                })}
+              </div>
+            </ScrollArea>
           </DialogContent>
         </Dialog>
-
         <p>0 comments(s)</p>
       </div>
       <Separator className="mb-4" />
@@ -106,11 +104,11 @@ export default function PostCard({
           onClick={isLiked ? handleUnlike : handleLike}
           variant={isLiked ? "default" : "ghost"}
           className="text-xs flex flex-row gap-1 items-center"
+          size={"icon"}
         >
           <BiLike className="text-lg" />
-          <p>Like</p>
         </Button>
-        <Input placeholder="Comment" disabled className="min-h-0" />
+        <Input placeholder="Comment" disabled className="min-h-0 flex-1" />
       </CardFooter>
     </Card>
   );

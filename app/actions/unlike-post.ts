@@ -3,12 +3,11 @@
 import { createClient } from "@/utils/supabase/server";
 import { z } from "zod";
 
-const postUUID = z.string().uuid();
-const userUUID = z.string().uuid();
+const UUID = z.string().uuid();
 
 export default async function unlikePost(
-  postId: z.infer<typeof postUUID>,
-  userUUID: z.infer<typeof postUUID>
+  postId: z.infer<typeof UUID>,
+  userUUID: z.infer<typeof UUID>
 ) {
   const supabase = createClient();
   const { error } = await supabase.from("posts_likes").delete().match({
