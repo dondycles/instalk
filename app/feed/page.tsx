@@ -13,8 +13,13 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import getFriends from "../actions/get-friends";
 import getFriend from "../actions/get-friend";
-import { Check, X } from "lucide-react";
-import Link from "next/link";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
 import UserRequestCard from "./user-requestcard";
 
 export default function Feed() {
@@ -99,15 +104,15 @@ export default function Feed() {
   }, [friendsAndReqsData?.success]);
 
   return (
-    <main className="p-4 w-full h-full flex flex-col gap-4">
+    <main className="p-4 pb-0 w-full h-full flex flex-col gap-4">
       <FeedNav />
       {feedDataLoading ? (
         <p className="text-center text-muted-foreground text-sm">
           Getting the latest posts...
         </p>
       ) : (
-        <div className="overflow-auto w-full h-full flex flex-row gap-4">
-          <div className="w-1/5 hidden md:flex">
+        <div className="overflow-auto w-full h-full md:grid grid-cols-4 gap-4">
+          <div className="col-span-1 hidden md:flex pb-4 w-full">
             <Button
               variant={"ghost"}
               className="w-full flex gap-1 items-center"
@@ -118,9 +123,9 @@ export default function Feed() {
               </p>
             </Button>
           </div>
-          <ScrollArea className="w-full md:max-w-[800px] md:w-3/5 min-w-[300px] mx-auto">
+          <ScrollArea className="w-full min-w-[300px] mx-auto col-span-2">
             <PostForm />
-            <div className="flex flex-col gap-4 mt-4">
+            <div className="flex flex-col gap-4 mt-4 pb-4">
               {feedData?.data?.map((post) => {
                 return (
                   <PostCard
@@ -132,31 +137,39 @@ export default function Feed() {
               })}
             </div>
           </ScrollArea>
-          <div className="w-1/5 flex-col hidden md:flex gap-2">
-            <p className="font-bold">Friends</p>
-            {arrangedFriendsData?.map((friend) => {
-              return (
-                <Button
-                  key={friend.id}
-                  variant={"ghost"}
-                  className="w-full flex gap-1 items-center"
-                >
-                  <FaUserCircle className="text-2xl min-w-fit" />
-                  <p className="truncate w-full text-left">{friend.fullname}</p>
-                </Button>
-              );
-            })}
-            <Separator />
-            <p className="font-bold">Friend requests</p>
-            {arrangedRequestsData?.map((friend) => {
-              return (
-                <UserRequestCard
-                  key={friend.id}
-                  friend={friend}
-                  user={userData?.data}
-                />
-              );
-            })}
+          <div className="col-span-1 hidden md:flex pb-4 w-full flex-col gap-4 relative overflow-auto">
+            <div className="flex flex-col gap-4 max-h-[33%] overflow-auto">
+              <p className="text-sm font-bold">Friends</p>
+              <div className="w-full flex flex-col gap-2">
+                {arrangedFriendsData?.map((friend) => {
+                  return (
+                    <Button
+                      key={friend.id}
+                      variant={"ghost"}
+                      className="w-full flex gap-1 items-center"
+                    >
+                      <FaUserCircle className="text-2xl min-w-fit" />
+                      <p className="truncate w-full text-left">
+                        {friend.fullname}
+                      </p>
+                    </Button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-4  max-h-[33%] overflow-auto">
+              <p className="text-sm font-bold">Requests</p>
+              {arrangedRequestsData?.map((friend) => {
+                return (
+                  <UserRequestCard
+                    key={friend.id}
+                    friend={friend}
+                    user={userData?.data}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
       )}

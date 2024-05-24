@@ -56,7 +56,6 @@ export default function UserHoverCard({
   const handleAddFriend = async () => {
     if (!user) return;
     if (user?.id === post.user) return;
-    if (isAccepted) return;
     setIsAddingFriend(true);
     await addFriend(post.user, user.id);
     queryClient.invalidateQueries({
@@ -116,16 +115,19 @@ export default function UserHoverCard({
               disabled={isAddingFriend || isAcceptingFriend}
               onClick={
                 Boolean(friendStatus?.success)
-                  ? iRequested
+                  ? isAccepted
+                    ? handleAddFriend
+                    : iRequested
                     ? handleAddFriend
                     : handleAcceptFriend
                   : handleAddFriend
               }
               className="flex-1"
+              variant={isAccepted ? "destructive" : "default"}
             >
               {Boolean(friendStatus?.success)
                 ? isAccepted
-                  ? "Friend"
+                  ? "Unfriend"
                   : iRequested
                   ? "Cancel Request"
                   : "Accept Request"
