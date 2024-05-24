@@ -8,7 +8,6 @@ export default function Home() {
       <div className="m-auto space-y-4 w-fit flex flex-col">
         <div>
           <h1 className="text-4xl font-black">Instalk.</h1>
-
           <p>Talk to everyone, instantly.</p>
         </div>
         <div className="flex gap-4 flex-1">

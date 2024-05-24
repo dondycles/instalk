@@ -9,6 +9,7 @@ export default async function addFriend(
   myId: z.infer<typeof UUID>
 ) {
   const supabase = createClient();
+
   const { data } = await supabase
     .from("friend_reqs")
     .select("id")
@@ -16,7 +17,7 @@ export default async function addFriend(
       `and(user_2.eq.${userId},user_1.eq.${myId}),and(user_1.eq.${userId},user_2.eq.${myId})`
     )
     .single();
-  console.log(data);
+
   if (data) {
     await supabase
       .from("friend_reqs")

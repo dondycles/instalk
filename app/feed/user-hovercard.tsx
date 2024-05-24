@@ -9,10 +9,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Database } from "@/database.types";
 import { MdLockOutline, MdOutlinePublic } from "react-icons/md";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import addFriend from "../actions/add-friend";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import getFriendStatus from "../actions/get-friendstatus";
+import acceptFriend from "../actions/accept-friend";
 
 export default function UserHoverCard({
   post,
@@ -22,26 +23,56 @@ export default function UserHoverCard({
   user?: Database["public"]["Tables"]["users"]["Row"];
 }) {
   const [isAddingFriend, setIsAddingFriend] = useState(false);
+  const [isAcceptingFriend, setIsAcceptingFriend] = useState(false);
+  const [onOpenChange, setOnOpenChange] = useState(false);
   const queryClient = useQueryClient();
-  const handleAddFriend = async () => {
+
+  const { data: friendStatus, refetch } = useQuery({
+    queryKey: ["friendStatus", post.user],
+    queryFn: async () => getFriendStatus(post.user, user?.id ?? ""),
+    enabled: Boolean(user) && onOpenChange,
+    refetchOnMount: false,
+  });
+
+  const iRequested = Boolean(friendStatus?.success?.user_1 === user?.id);
+  const isAccepted = Boolean(friendStatus?.success?.isAccepted);
+  const handleAcceptFriend = async () => {
     if (!user) return;
-    if (user?.id === post.user) return;
-    setIsAddingFriend(true);
-    await addFriend(post.user, user.id);
-    setIsAddingFriend(false);
+    if (!friendStatus?.success) return;
+    if (isAccepted) return;
+    if (iRequested) return;
+
+    setIsAcceptingFriend(true);
+    await acceptFriend(post.user, user.id, friendStatus?.success?.id);
     queryClient.invalidateQueries({
       queryKey: ["friendStatus", post.user],
     });
+    queryClient.invalidateQueries({
+      queryKey: ["friends"],
+    });
+
+    setIsAcceptingFriend(false);
+  };
+  const handleAddFriend = async () => {
+    if (!user) return;
+    if (user?.id === post.user) return;
+    if (isAccepted) return;
+    setIsAddingFriend(true);
+    await addFriend(post.user, user.id);
+    queryClient.invalidateQueries({
+      queryKey: ["friendStatus", post.user],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["friends"],
+    });
+    setIsAddingFriend(false);
   };
 
-  const { data: friendStatus } = useQuery({
-    queryKey: ["friendStatus", post.user],
-    queryFn: async () => getFriendStatus(post.user, user?.id ?? ""),
-    enabled: !!user,
-  });
-
+  useEffect(() => {
+    refetch();
+  }, [onOpenChange]);
   return (
-    <HoverCard openDelay={250}>
+    <HoverCard openDelay={250} onOpenChange={setOnOpenChange}>
       <HoverCardTrigger asChild className="group/user">
         <CardTitle className="flex flex-row gap-1">
           <FaUserCircle className="text-4xl" />
@@ -82,11 +113,23 @@ export default function UserHoverCard({
         {user?.id !== post.user && (
           <div className="flex flex-row gap-4">
             <Button
-              disabled={isAddingFriend}
-              onClick={handleAddFriend}
+              disabled={isAddingFriend || isAcceptingFriend}
+              onClick={
+                Boolean(friendStatus?.success)
+                  ? iRequested
+                    ? handleAddFriend
+                    : handleAcceptFriend
+                  : handleAddFriend
+              }
               className="flex-1"
             >
-              {Boolean(friendStatus?.success) ? "Cancel Request" : "Add Friend"}
+              {Boolean(friendStatus?.success)
+                ? isAccepted
+                  ? "Friend"
+                  : iRequested
+                  ? "Cancel Request"
+                  : "Accept Request"
+                : "Add Friend"}
             </Button>
             <Button
               hidden={true}

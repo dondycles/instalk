@@ -10,7 +10,6 @@ export default async function getPosts() {
     .order("created_at", {
       ascending: false,
     });
-  console.log(data, error);
   if (error) return { error };
   return { data };
 }

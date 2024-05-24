@@ -10,9 +10,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { FaUserCircle } from "react-icons/fa";
 import logOut from "../actions/log-out";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function FeedNav() {
+  const queryClient = useQueryClient();
   const handleLogOut = async () => {
+    queryClient.clear();
     await logOut();
   };
   return (

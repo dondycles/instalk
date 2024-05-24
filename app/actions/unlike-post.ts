@@ -15,8 +15,6 @@ export default async function unlikePost(
     user: userUUID,
   });
 
-  console.log(error);
-
   if (error) return { error: error };
   return { success: "Posted!" };
 }

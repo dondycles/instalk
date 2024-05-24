@@ -1,16 +1,16 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { z } from "zod";
+const UUID = z.string().uuid();
 
-export default async function getUser() {
+export default async function getFriend(userId: z.infer<typeof UUID>) {
   const supabase = createClient();
-  const currentUserId = (await supabase.auth.getUser()).data.user?.id;
 
-  if (!currentUserId) return;
   const { data, error } = await supabase
     .from("users")
-    .select("*")
-    .eq("id", currentUserId)
+    .select("fullname")
+    .eq("id", userId)
     .single();
   if (error) return { error };
   return { data };
