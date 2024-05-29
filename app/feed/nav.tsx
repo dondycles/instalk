@@ -25,6 +25,7 @@ import { Database } from "@/database.types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function FeedNav() {
+  const [focused, setFocused] = useState(false);
   const queryClient = useQueryClient();
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query);
@@ -50,13 +51,14 @@ export default function FeedNav() {
       <p className="font-bold">Instalk.</p>
       <div className="flex-1 relative h-fit">
         <Input
-          onBlur={() => {
-            setShowResults(false);
-          }}
           onFocus={() => {
             if (query !== "") {
               setShowResults(true);
             }
+          }}
+          onBlur={() => {
+            if (focused) return;
+            setShowResults(false);
           }}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -65,7 +67,9 @@ export default function FeedNav() {
         />
         {showResults && (
           <div
-            onClick={(e) => e.stopPropagation()}
+            onClick={() => setFocused(true)}
+            onMouseOver={() => setFocused(true)}
+            onMouseLeave={() => setFocused(false)}
             className="w-full p-4 absolute top-[calc(100%+16px)] left-0 h-fit z-10 bg-white border rounded-md"
           >
             <p className="text-muted-foreground text-sm mb-4">results...</p>
