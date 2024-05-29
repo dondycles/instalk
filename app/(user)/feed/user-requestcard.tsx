@@ -3,7 +3,7 @@ import { Database } from "@/database.types";
 import { Check, X } from "lucide-react";
 import Link from "next/link";
 import { FaUserCircle } from "react-icons/fa";
-import acceptFriend from "../actions/accept-friend";
+import acceptFriend from "../../actions/accept-friend";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 

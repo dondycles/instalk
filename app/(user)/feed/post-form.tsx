@@ -11,7 +11,7 @@ import {
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import postPost from "../actions/post-post";
+import postPost from "../../actions/post-post";
 import {
   Select,
   SelectContent,

@@ -4,17 +4,14 @@ import {
   CardContent,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Database } from "@/database.types";
 import { BiLike } from "react-icons/bi";
-import { FaUserCircle } from "react-icons/fa";
-import { MdOutlinePublic, MdLockOutline } from "react-icons/md";
-import likePost from "../actions/like-post";
+import likePost from "../../actions/like-post";
 import { useQueryClient } from "@tanstack/react-query";
-import unlikePost from "../actions/unlike-post";
+import unlikePost from "../../actions/unlike-post";
 import { useState } from "react";
 import {
   Dialog,
@@ -24,13 +21,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import Link from "next/link";
 import UserHoverCard from "./user-hovercard";
 
 export default function PostCard({
@@ -52,6 +42,9 @@ export default function PostCard({
     setIsLiking(true);
     await likePost(post.id);
     queryClient.invalidateQueries({ queryKey: ["feed"] });
+    queryClient.invalidateQueries({
+      queryKey: ["profile", post.users?.username],
+    });
     setTimeout(() => setIsLiking(false), 1000);
   };
 
@@ -60,6 +53,9 @@ export default function PostCard({
     setIsLiking(true);
     await unlikePost(post.id, user?.id);
     queryClient.invalidateQueries({ queryKey: ["feed"] });
+    queryClient.invalidateQueries({
+      queryKey: ["profile", post.users?.username],
+    });
     setTimeout(() => setIsLiking(false), 1000);
   };
 

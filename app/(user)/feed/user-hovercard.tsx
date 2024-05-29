@@ -10,10 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Database } from "@/database.types";
 import { MdLockOutline, MdOutlinePublic } from "react-icons/md";
 import { useEffect, useState } from "react";
-import addFriend from "../actions/add-friend";
+import addFriend from "../../actions/add-friend";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import getFriendStatus from "../actions/get-friendstatus";
-import acceptFriend from "../actions/accept-friend";
+import getFriendStatus from "../../actions/get-friendstatus";
+import acceptFriend from "../../actions/accept-friend";
 
 export default function UserHoverCard({
   post,
@@ -77,7 +77,7 @@ export default function UserHoverCard({
           <FaUserCircle className="text-4xl" />
           <div className="flex flex-col">
             <Link
-              href={"/u/" + user?.username}
+              href={"/u/" + post.users?.username}
               className="text-sm group-hover/user:underline"
             >
               @{post.users?.username}
@@ -134,7 +134,6 @@ export default function UserHoverCard({
                 : "Add Friend"}
             </Button>
             <Button
-              hidden={true}
               className={`flex-1 ${Boolean(friendStatus?.success) && "hidden"}`}
               variant={"outline"}
             >

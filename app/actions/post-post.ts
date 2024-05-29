@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
-import { postSchema } from "../feed/post-form";
+import { postSchema } from "../(user)/feed/post-form";
 import { z } from "zod";
 
 export default async function postPost(postData: z.infer<typeof postSchema>) {

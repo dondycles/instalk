@@ -33,8 +33,10 @@ export default function FeedNav({
   const queryClient = useQueryClient();
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query);
+
   const [result, setResult] =
     useState<Database["public"]["Tables"]["users"]["Row"][]>();
+
   const [showResults, setShowResults] = useState(false);
 
   const handleSearch = async () => {
@@ -51,8 +53,10 @@ export default function FeedNav({
     handleSearch();
   }, [debouncedQuery]);
   return (
-    <div className="flex gap-4 items-center">
-      <p className="font-bold">Instalk.</p>
+    <nav className="flex gap-4 items-center pt-4 px-4  h-14">
+      <Link href={"/feed"} className="font-bold">
+        Instalk.
+      </Link>
       <div className="flex-1 relative h-fit">
         <Input
           onFocus={() => {
@@ -126,6 +130,6 @@ export default function FeedNav({
           <DropdownMenuItem onClick={handleLogOut}>Log Out</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-    </div>
+    </nav>
   );
 }

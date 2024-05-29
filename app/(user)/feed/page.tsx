@@ -2,16 +2,15 @@
 
 import { useQuery } from "@tanstack/react-query";
 import PostForm from "./post-form";
-import getPosts from "../actions/get-posts";
+import getPosts from "../../actions/get-posts";
 import PostCard from "./post-card";
-import getUser from "../actions/get-user";
+import getUser from "../../actions/get-user";
 import React, { useEffect } from "react";
-import FeedNav from "./nav";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FaUserCircle } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
-import getFriends from "../actions/get-friends";
-import getFriend from "../actions/get-friend";
+import getFriends from "../../actions/get-friends";
+import getFriend from "../../actions/get-friend";
 
 import UserRequestCard from "./user-requestcard";
 import Link from "next/link";
@@ -60,13 +59,14 @@ export default function Feed() {
     for (const friend of friendsAndReqsData.success) {
       const friendId =
         friend.user_1 === userData?.data?.id ? friend.user_2 : friend.user_1;
-      const fullname = (await getFriend(friendId)).data?.fullname;
+      const { data } = await getFriend(friendId);
 
       if (friend.isAccepted !== true) continue;
       arrangedFriends.push({
         id: friend.id,
         friend: friendId,
-        fullname,
+        fullname: data?.fullname,
+        username: data?.username,
       });
     }
     return arrangedFriends;
@@ -79,14 +79,15 @@ export default function Feed() {
     for (const friend of friendsAndReqsData.success) {
       const friendId =
         friend.user_1 === userData?.data?.id ? friend.user_2 : friend.user_1;
-      const fullname = (await getFriend(friendId)).data?.fullname;
+      const { data } = await getFriend(friendId);
 
       if (friend.isAccepted === true) continue;
       if (friend.user_1 === userData?.data?.id) continue;
       arrangedRequests.push({
         id: friend.id,
         friend: friendId,
-        fullname,
+        fullname: data?.fullname,
+        username: data?.username,
       });
     }
     return arrangedRequests;
@@ -99,7 +100,6 @@ export default function Feed() {
 
   return (
     <main className="p-4 pb-0 w-full h-full flex flex-col gap-4">
-      <FeedNav user={userData?.data} />
       {feedDataLoading ? (
         <p className="text-center text-muted-foreground text-sm">
           Getting the latest posts...
@@ -146,7 +146,7 @@ export default function Feed() {
                       className="w-full flex gap-1 items-center"
                       asChild
                     >
-                      <Link href={"/u/" + friend.id}>
+                      <Link href={"/u/" + friend.username}>
                         <FaUserCircle className="text-2xl min-w-fit" />
                         <p className="truncate w-full text-left">
                           {friend.fullname}
