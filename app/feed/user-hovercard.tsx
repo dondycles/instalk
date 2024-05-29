@@ -77,7 +77,7 @@ export default function UserHoverCard({
           <FaUserCircle className="text-4xl" />
           <div className="flex flex-col">
             <Link
-              href={"/" + user?.username}
+              href={"/u/" + user?.username}
               className="text-sm group-hover/user:underline"
             >
               @{post.users?.username}

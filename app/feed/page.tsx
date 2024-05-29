@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/accordion";
 
 import UserRequestCard from "./user-requestcard";
+import Link from "next/link";
 
 export default function Feed() {
   const { data: userData } = useQuery({
@@ -116,11 +117,14 @@ export default function Feed() {
             <Button
               variant={"ghost"}
               className="w-full flex gap-1 items-center"
+              asChild
             >
-              <FaUserCircle className="text-2xl min-w-fit" />
-              <p className="truncate w-full text-left">
-                {userData?.data?.fullname}
-              </p>
+              <Link href={"/profile"}>
+                <FaUserCircle className="text-2xl min-w-fit" />
+                <p className="truncate w-full text-left">
+                  {userData?.data?.fullname}
+                </p>
+              </Link>
             </Button>
           </div>
           <ScrollArea className="w-full min-w-[300px] mx-auto col-span-2">
@@ -147,11 +151,14 @@ export default function Feed() {
                       key={friend.id}
                       variant={"ghost"}
                       className="w-full flex gap-1 items-center"
+                      asChild
                     >
-                      <FaUserCircle className="text-2xl min-w-fit" />
-                      <p className="truncate w-full text-left">
-                        {friend.fullname}
-                      </p>
+                      <Link href={"/u/" + friend.id}>
+                        <FaUserCircle className="text-2xl min-w-fit" />
+                        <p className="truncate w-full text-left">
+                          {friend.fullname}
+                        </p>
+                      </Link>
                     </Button>
                   );
                 })}
