@@ -24,7 +24,11 @@ import { useDebounce } from "@/lib/useDebounce";
 import { Database } from "@/database.types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-export default function FeedNav() {
+export default function FeedNav({
+  user,
+}: {
+  user: Database["public"]["Tables"]["users"]["Row"] | undefined;
+}) {
   const [focused, setFocused] = useState(false);
   const queryClient = useQueryClient();
   const [query, setQuery] = useState("");
@@ -78,8 +82,21 @@ export default function FeedNav() {
                 {result?.length ? (
                   result?.map((res) => {
                     return (
-                      <Button key={res.id} asChild>
-                        <Link href={"/u/" + res.id}>{res.fullname}</Link>
+                      <Button
+                        key={res.id}
+                        asChild
+                        variant={"ghost"}
+                        className="gap-1"
+                      >
+                        <Link
+                          target="_parent"
+                          href={
+                            res.id === user?.id ? "/profile" : "/u/" + res.id
+                          }
+                        >
+                          <FaUserCircle className="text-2xl min-w-fit" />
+                          <p className="text-left w-full">{res.fullname}</p>
+                        </Link>
                       </Button>
                     );
                   })

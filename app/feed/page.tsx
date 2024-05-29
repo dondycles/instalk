@@ -10,15 +10,8 @@ import FeedNav from "./nav";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FaUserCircle } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import getFriends from "../actions/get-friends";
 import getFriend from "../actions/get-friend";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 
 import UserRequestCard from "./user-requestcard";
 import Link from "next/link";
@@ -106,7 +99,7 @@ export default function Feed() {
 
   return (
     <main className="p-4 pb-0 w-full h-full flex flex-col gap-4">
-      <FeedNav />
+      <FeedNav user={userData?.data} />
       {feedDataLoading ? (
         <p className="text-center text-muted-foreground text-sm">
           Getting the latest posts...
