@@ -14,24 +14,33 @@ import getFriend from "../../actions/get-friend";
 
 import UserRequestCard from "./user-requestcard";
 import Link from "next/link";
+import { createClient } from "@/utils/supabase/client";
 
 export default function Feed() {
+  const supabase = createClient();
   const { data: userData } = useQuery({
     queryKey: ["user"],
     queryFn: async () => await getUser(),
   });
 
-  const { data: feedData, isLoading: feedDataLoading } = useQuery({
+  const {
+    data: feedData,
+    isLoading: feedDataLoading,
+    refetch: refetchFeedData,
+  } = useQuery({
     queryKey: ["feed"],
     queryFn: async () => await getPosts(),
   });
 
-  const { data: friendsAndReqsData, isLoading: friendsAndReqsDataLoading } =
-    useQuery({
-      queryKey: ["friends"],
-      queryFn: async () => await getFriends(userData?.data?.id ?? ""),
-      enabled: !!userData?.data,
-    });
+  const {
+    data: friendsAndReqsData,
+    isLoading: friendsAndReqsDataLoading,
+    refetch: refetchFriendsAndReqsData,
+  } = useQuery({
+    queryKey: ["friends"],
+    queryFn: async () => await getFriends(userData?.data?.id ?? ""),
+    enabled: !!userData?.data,
+  });
 
   const {
     data: arrangedFriendsData,
@@ -94,6 +103,35 @@ export default function Feed() {
   };
 
   useEffect(() => {
+    const postchannels = supabase
+      .channel("posts")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "posts" },
+        () => {
+          refetchFeedData();
+        }
+      )
+      .subscribe();
+
+    const friendreqschannels = supabase
+      .channel("friend_reqs")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "friend_reqs" },
+        () => {
+          refetchFriendsAndReqsData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(postchannels);
+      supabase.removeChannel(friendreqschannels);
+    };
+  }, [supabase]);
+
+  useEffect(() => {
     refetchArrangedFriendsData();
     refetchArrangedRequestsData();
   }, [friendsAndReqsData?.success]);
@@ -112,7 +150,7 @@ export default function Feed() {
               className="w-full flex gap-1 items-center"
               asChild
             >
-              <Link href={"/profile"}>
+              <Link href={"/u/" + userData?.data?.username}>
                 <FaUserCircle className="text-2xl min-w-fit" />
                 <p className="truncate w-full text-left">
                   {userData?.data?.fullname}

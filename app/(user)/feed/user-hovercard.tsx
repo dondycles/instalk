@@ -1,4 +1,5 @@
 import { FaUserCircle } from "react-icons/fa";
+import { FaMessage } from "react-icons/fa6";
 import { CardTitle } from "@/components/ui/card";
 import {
   HoverCard,
@@ -14,6 +15,7 @@ import addFriend from "../../actions/add-friend";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import getFriendStatus from "../../actions/get-friendstatus";
 import acceptFriend from "../../actions/accept-friend";
+import createChat from "@/app/actions/create-chat";
 
 export default function UserHoverCard({
   post,
@@ -110,36 +112,50 @@ export default function UserHoverCard({
           </div>
         </div>
         {user?.id !== post.user && (
-          <div className="flex flex-row gap-4">
-            <Button
-              disabled={isAddingFriend || isAcceptingFriend}
-              onClick={
-                Boolean(friendStatus?.success)
+          <>
+            <div className="flex flex-row gap-4">
+              <Button
+                disabled={isAddingFriend || isAcceptingFriend}
+                onClick={
+                  Boolean(friendStatus?.success)
+                    ? isAccepted
+                      ? handleAddFriend
+                      : iRequested
+                      ? handleAddFriend
+                      : handleAcceptFriend
+                    : handleAddFriend
+                }
+                className="flex-1"
+                variant={isAccepted ? "destructive" : "default"}
+              >
+                {Boolean(friendStatus?.success)
                   ? isAccepted
-                    ? handleAddFriend
+                    ? "Unfriend"
                     : iRequested
-                    ? handleAddFriend
-                    : handleAcceptFriend
-                  : handleAddFriend
-              }
-              className="flex-1"
-              variant={isAccepted ? "destructive" : "default"}
-            >
-              {Boolean(friendStatus?.success)
-                ? isAccepted
-                  ? "Unfriend"
-                  : iRequested
-                  ? "Cancel Request"
-                  : "Accept Request"
-                : "Add Friend"}
-            </Button>
-            <Button
-              className={`flex-1 ${Boolean(friendStatus?.success) && "hidden"}`}
-              variant={"outline"}
-            >
-              Block
-            </Button>
-          </div>
+                    ? "Cancel Request"
+                    : "Accept Request"
+                  : "Add Friend"}
+              </Button>
+              <Button
+                className={`flex-1 ${
+                  Boolean(friendStatus?.success) && "hidden"
+                }`}
+                variant={"outline"}
+              >
+                Block
+              </Button>
+            </div>
+            {friendStatus?.success?.isAccepted && (
+              <Button
+                onClick={async () => {
+                  const { success } = await createChat(post.user);
+                }}
+                className="w-full flex gap-1 items-center"
+              >
+                <p>Chat</p> <FaMessage />
+              </Button>
+            )}
+          </>
         )}
       </HoverCardContent>
     </HoverCard>

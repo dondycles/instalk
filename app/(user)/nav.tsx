@@ -13,17 +13,13 @@ import logOut from "../actions/log-out";
 import { useQueryClient } from "@tanstack/react-query";
 
 import Link from "next/link";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+
 import { useEffect, useState } from "react";
 import searchUser from "../actions/search-user";
 import { useDebounce } from "@/lib/useDebounce";
 import { Database } from "@/database.types";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
+import { FaMessage } from "react-icons/fa6";
 export default function FeedNav({
   user,
 }: {
@@ -114,7 +110,21 @@ export default function FeedNav({
           </div>
         )}
       </div>
-
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button size={"icon"}>
+            <FaMessage className="text-xl" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link href={"/profile"}>Profile</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleLogOut}>Log Out</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button size={"icon"}>
