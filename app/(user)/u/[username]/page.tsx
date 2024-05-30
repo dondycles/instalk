@@ -121,7 +121,7 @@ export default function UserPage({ params }: { params: { username: string } }) {
                 {profileData?.data?.fullname}
               </p>
               {userData?.data?.id !== profileData?.data?.id && (
-                <div className="flex flex-row gap-4 w-1/2 min-w-[300px]">
+                <div className="flex flex-row gap-4 w-1/2 min-w-fit">
                   <Button
                     disabled={isAddingFriend || isAcceptingFriend}
                     onClick={

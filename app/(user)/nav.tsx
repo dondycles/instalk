@@ -117,12 +117,9 @@ export default function FeedNav({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+          <DropdownMenuLabel>Messages</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Link href={"/profile"}>Profile</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleLogOut}>Log Out</DropdownMenuItem>
+          <DropdownMenuItem>No messages yet...</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       <DropdownMenu>
@@ -135,7 +132,7 @@ export default function FeedNav({
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
-            <Link href={"/profile"}>Profile</Link>
+            <Link href={"/u/" + user?.username}>Profile</Link>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={handleLogOut}>Log Out</DropdownMenuItem>
         </DropdownMenuContent>
